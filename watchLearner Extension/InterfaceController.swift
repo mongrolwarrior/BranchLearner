@@ -15,6 +15,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     var answerIsHidden = true
     var session: WCSession!
     var currentQid: NSNumber?
+    var soundToPlay: String?
     
     @IBOutlet var showAnswerButton: WKInterfaceButton!
     @IBOutlet var questionLabel: WKInterfaceLabel!
@@ -26,6 +27,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     @IBOutlet var lastAnsweredLabel: WKInterfaceLabel!
     @IBOutlet var nextDueLabel: WKInterfaceLabel!
+    @IBOutlet var playSoundButton: WKInterfaceButton!
     
     var player: WKAudioFilePlayer!
     
@@ -58,21 +60,18 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     @IBAction func playSound() {
-    /*    let myBundle = NSBundle.mainBundle()
-        let soundFile = myBundle.URLForResource("5", withExtension: "mp3")
-        
-        let options: [NSObject: AnyObject] = [WKMediaPlayerControllerOptionsAutoplayKey : true]
-        presentMediaPlayerControllerWithURL(soundFile!, options: options) { (didEndPlay: Bool, endTime: NSTimeInterval, error: NSError?) -> Void in
-            // 3
-            print("Finished playing \(soundFile!.URL.lastPathComponent). Did end play? \(didEndPlay). Error?\(error?.localizedDescription)")
+        if soundToPlay != nil {
+            let myBundle = NSBundle.mainBundle()
+            var soundMinusMP3 = soundToPlay!
+            soundMinusMP3 = "5.mp3"
+            let stringRange = soundMinusMP3.startIndex.advancedBy(soundMinusMP3.characters.count - 4)..<soundMinusMP3.endIndex
+            soundMinusMP3.removeRange(stringRange)
+            let soundFile = myBundle.URLForResource(soundToPlay, withExtension: "mp3")
+            
+            let options: [NSObject: AnyObject] = [WKMediaPlayerControllerOptionsAutoplayKey : true]
+            presentMediaPlayerControllerWithURL(soundFile!, options: options) { (didEndPlay: Bool, endTime: NSTimeInterval, error: NSError?) -> Void in
+            }
         }
-      */
-        let filePath = NSBundle.mainBundle().pathForResource("5", ofType: "mp3")!
-        let fileUrl = NSURL.fileURLWithPath(filePath)
-        let asset = WKAudioFileAsset(URL: fileUrl)
-        let playerItem = WKAudioFilePlayerItem(asset: asset)
-        player = WKAudioFilePlayer(playerItem: playerItem)
-        player.play()
     }
     
     @IBAction func onCorrectAnswer() {
@@ -116,9 +115,18 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 let aImage = reply["aImage"] as? String,
                 let lastAnsweredText = reply["lastanswered"] as? String,
                 let nextDueText = reply["nextdue"] as? String,
-                let qid = reply["qid"] as? NSNumber
+                let qid = reply["qid"] as? NSNumber,
+                let aSound = reply["asound"] as? String,
+                let qSound = reply["qsound"] as? String
             {
-                self.setDisplay(question, answer: answer, qImage: qImage, aImage: aImage, lastAnswered: lastAnsweredText, nextDue: nextDueText)
+                if  !aSound.isEmpty {
+                    self.soundToPlay = aSound
+                    
+                }
+                if !qSound.isEmpty {
+                    self.soundToPlay = qSound
+                }
+                self.setDisplay(question, answer: answer, qImage: qImage, aImage: aImage, lastAnswered: lastAnsweredText, nextDue: nextDueText, qSound: qSound, aSound: aSound)
                 self.currentQid = qid
             }
             }, errorHandler:
@@ -136,9 +144,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         self.getQuestionFromiPhone()
     }
     
-    func setDisplay(question: String, answer: String, qImage: String, aImage: String, lastAnswered: String, nextDue: String) {
+    func setDisplay(question: String, answer: String, qImage: String, aImage: String, lastAnswered: String, nextDue: String, qSound: String, aSound: String) {
         questionImage.setImage(nil)
         questionImage.setHidden(true)
+        playSoundButton.setHidden(true)
         if !question.isEmpty {
             self.questionLabel.setHidden(false)
             self.questionLabel.setText(question)
@@ -165,6 +174,14 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
         if !nextDue.isEmpty {
             nextDueLabel.setText(nextDue)
+        }
+        if !qSound.isEmpty {
+            playSoundButton.setHidden(false)
+            soundToPlay = qSound
+        }
+        if !aSound.isEmpty {
+            playSoundButton.setHidden(false)
+            soundToPlay = aSound
         }
         self.answerLabel.setHidden(true)
         answerIsHidden = true

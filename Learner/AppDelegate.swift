@@ -220,6 +220,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
                         } else {
                             reply["nextdue"] = "No next due date"
                         }
+                        if questions[0].aSound != nil {
+                            reply["asound"] = questions[0].aSound!
+                        } else {
+                            reply["asound"] = ""
+                        }
+                        if questions[0].qSound != nil {
+                            reply["qsound"] = questions[0].qSound!
+                        } else {
+                            reply["qsound"] = ""
+                        }
                     /*
                         reply["qid"] = NSNumber(int: 1)
                         reply["question"] = "question"
