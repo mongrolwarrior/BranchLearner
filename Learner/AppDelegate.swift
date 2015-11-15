@@ -105,6 +105,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
             dateLatency = 1800
             triggerNewQuestion()
         }
+        NSNotificationCenter.defaultCenter().postNotificationName("questionAnswered", object: nil)
+        
         scheduleLocal(self, timeToSend: dateLatency)
    //     self.updateCurrentQuestion(accuracy)
      //   setQuestion()
@@ -124,6 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         }
         questions[0].current = true
         questions[0].nextdue = NSDate()
+        questions[0].lastanswered = NSDate()
     }
     
     func scheduleLocal(sender: AnyObject, timeToSend: NSTimeInterval) {

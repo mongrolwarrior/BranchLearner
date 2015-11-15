@@ -108,33 +108,35 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         let applicationData = ["messageType": "getQuestion"]
         
-        session.sendMessage(applicationData, replyHandler: {(reply: [String : AnyObject]) -> Void in
-            if let question = reply["question"] as? String,
-                let answer = reply["answer"] as? String,
-                let qImage = reply["qImage"] as? String,
-                let aImage = reply["aImage"] as? String,
-                let lastAnsweredText = reply["lastanswered"] as? String,
-                let nextDueText = reply["nextdue"] as? String,
-                let qid = reply["qid"] as? NSNumber,
-                let aSound = reply["asound"] as? String,
-                let qSound = reply["qsound"] as? String
-            {
-                if  !aSound.isEmpty {
-                    self.soundToPlay = aSound
-                    
+        if session.reachable {              // This wakes up iphone app into background http://stackoverflow.com/questions/31618550/how-to-wake-up-iphone-app-from-watchos-2 - answer by ccjensen
+            session.sendMessage(applicationData, replyHandler: {(reply: [String : AnyObject]) -> Void in
+                if let question = reply["question"] as? String,
+                    let answer = reply["answer"] as? String,
+                    let qImage = reply["qImage"] as? String,
+                    let aImage = reply["aImage"] as? String,
+                    let lastAnsweredText = reply["lastanswered"] as? String,
+                    let nextDueText = reply["nextdue"] as? String,
+                    let qid = reply["qid"] as? NSNumber,
+                    let aSound = reply["asound"] as? String,
+                    let qSound = reply["qsound"] as? String
+                {
+                    if  !aSound.isEmpty {
+                        self.soundToPlay = aSound
+                        
+                    }
+                    if !qSound.isEmpty {
+                        self.soundToPlay = qSound
+                    }
+                    self.setDisplay(question, answer: answer, qImage: qImage, aImage: aImage, lastAnswered: lastAnsweredText, nextDue: nextDueText, qSound: qSound, aSound: aSound)
+                    self.currentQid = qid
                 }
-                if !qSound.isEmpty {
-                    self.soundToPlay = qSound
+                }, errorHandler:
+                {
+                    (error ) -> Void in
+                    // catch any errors here
                 }
-                self.setDisplay(question, answer: answer, qImage: qImage, aImage: aImage, lastAnswered: lastAnsweredText, nextDue: nextDueText, qSound: qSound, aSound: aSound)
-                self.currentQid = qid
-            }
-            }, errorHandler:
-            {
-                (error ) -> Void in
-                // catch any errors here
-            }
-        )
+            )
+        }
     }
     
     override func willActivate() {

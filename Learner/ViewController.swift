@@ -14,6 +14,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
     var managedContext: NSManagedObjectContext!
  //   var currentQuestions = [NSManagedObject]()
     var currentQuestion: Questions!
+    var questionPicture: Bool = false
     
     lazy var earliestActiveQuestionPredicate: NSPredicate = {
         var predicate = NSPredicate(format: "current = YES AND lastanswered<= %@", NSDate(timeIntervalSinceNow: -3600))
@@ -32,12 +33,36 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
     
     @IBOutlet weak var answerLabel: UILabel!
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let app = UIApplication.sharedApplication()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground:", name: UIApplicationWillEnterForegroundNotification, object: app)
+        
+        self.updateCurrentQuestion()
+        self.setQuestion()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func applicationWillEnterForeground(sender: AnyObject) {        
+        self.updateCurrentQuestion()
+        self.setQuestion()
+    }
+    
+    func questionAnswered(notification: NSNotification) {
+        self.updateCurrentQuestion()
+        self.setQuestion()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        self.updateCurrentQuestion(true)
-        self.setQuestion()
         
         let aSelector : Selector = "toggleAnswer:"
         let tapGesture = UITapGestureRecognizer(target: self, action: aSelector)
@@ -71,6 +96,9 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         let swipeDown = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         swipeDown.direction = UISwipeGestureRecognizerDirection.Down
         self.view.addGestureRecognizer(swipeDown)
+        
+        //let NewQuestionTriggered = NSNotification(name: "newQuestionTriggered", object: "object")
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "questionAnswered:", name: "questionAnswered", object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -83,6 +111,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         let documentsFolderPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
         return documentsFolderPath
     }
+    
     // File in Documents directory
     func fileInDocumentsDirectory(filename: String) -> String {
         return documentsDirectory().stringByAppendingPathComponent(filename)
@@ -96,12 +125,10 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
             }
         }
         if currentQuestion.answer != nil {
-            if !currentQuestion.answer!.isEmpty {
-                if answerLabel.text == "" {
-                    answerLabel.text = currentQuestion.answer!
-                } else {
-                    answerLabel.text = ""
-                }
+            if answerLabel.text == "" {
+                answerLabel.text = currentQuestion.answer!
+            } else {
+                answerLabel.text = ""
             }
         }
     }
@@ -132,14 +159,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         }
     }
   
-    func updateCurrentQuestion(accuracy: Bool) {
-        
-        do {
-            if !accuracy {
-                currentQuestion.correction = NSNumber(double: (currentQuestion.correction?.doubleValue)! + 0.04)
-            }
-        }
-        
+    func updateCurrentQuestion() {
         var questions = [Questions]()
         let request = NSFetchRequest(entityName: "Questions")
         request.predicate = earliestActiveQuestionPredicate
@@ -229,7 +249,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         } catch _ as NSError {
             print("deleteQuestion error")
         }
-        self.updateCurrentQuestion(true)
+        self.updateCurrentQuestion()
         self.setQuestion()
     }
     
@@ -246,6 +266,8 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         }
         currentQuestion = questions[0]
         currentQuestion.current = true
+        currentQuestion.nextdue = NSDate()
+        currentQuestion.lastanswered = NSDate()
         self.setQuestion()
     }
     
@@ -263,20 +285,26 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
             changeNextDue(NSDate(timeIntervalSinceNow: 600))
         }
         
+        do {
+            if !accuracy {
+                currentQuestion.correction = NSNumber(double: (currentQuestion.correction?.doubleValue)! + 0.04)
+            }
+        }
+        
         self.addToAnswerLog(accuracy)
         
         if dateLatency < -18000 {
             dateLatency = 300.0
         } else if dateLatency < 0 {
             dateLatency = 600 + dateLatency/60
-        } else if dateLatency < 7200 {
-            dateLatency = 600 + dateLatency/6
+        } else if dateLatency < 12 {
+            dateLatency = 600 + dateLatency
         } else {
             dateLatency = 1800
             triggerNewQuestion()
         }
         scheduleLocal(self, timeToSend: dateLatency)
-        self.updateCurrentQuestion(accuracy)
+        self.updateCurrentQuestion()
         setQuestion()
     }
     
