@@ -17,7 +17,8 @@
                         </button>
                         <label alignment="left" numberOfLines="0" id="fyM-l0-eCv"/>
                         <label alignment="left" hidden="YES" numberOfLines="0" id="HRv-lb-aLB"/>
-                        <imageView alignment="left" id="lFk-9x-qTT"/>
+                        <imageView alignment="left" hidden="YES" id="lFk-9x-qTT"/>
+                        <imageView alignment="left" hidden="YES" id="JwZ-hH-UaV" userLabel="Answer Image"/>
                         <label alignment="left" text="Last answered:" id="duq-Ow-kN8" userLabel="Last answered:">
                             <fontDescription key="font" type="system" pointSize="10"/>
                         </label>
@@ -52,6 +53,7 @@
                         </items>
                     </menu>
                     <connections>
+                        <outlet property="answerImage" destination="JwZ-hH-UaV" id="pMw-ZO-6pc"/>
                         <outlet property="answerLabel" destination="HRv-lb-aLB" id="xVt-Ut-dDP"/>
                         <outlet property="lastAnsweredLabel" destination="6fB-Mt-sZs" id="hro-sh-U7i"/>
                         <outlet property="nextDueDate" destination="EFe-1S-c38" id="fq3-QO-dTW"/>

@@ -81,7 +81,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         twoTapGesture.numberOfTouchesRequired = 2
         view.addGestureRecognizer(twoTapGesture)
         
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: "addQuestion:")
         swipeRight.direction = UISwipeGestureRecognizerDirection.Right
         self.view.addGestureRecognizer(swipeRight)
         
@@ -125,16 +125,19 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
             }
         }
         if currentQuestion.answer != nil {
-            if answerLabel.text == "" {
-                answerLabel.text = currentQuestion.answer!
-            } else {
-                answerLabel.text = ""
+            if !currentQuestion.answer!.isEmpty {
+                if answerLabel.text == "" {
+                    answerLabel.text = currentQuestion.answer!
+                } else {
+                    answerLabel.text = ""
+                }
             }
         }
     }
     
     func setQuestion() {
         answerLabel.text = ""
+        
         if currentQuestion.question != nil {
             if !currentQuestion.question!.isEmpty {
                 questionLabel.text = currentQuestion.question!
@@ -309,6 +312,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
     }
     
     func scheduleLocal(sender: AnyObject, timeToSend: NSTimeInterval) {
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
         let settings = UIApplication.sharedApplication().currentUserNotificationSettings()
         
         if settings!.types == .None {
@@ -326,16 +330,28 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
     
-    func displayAnswer(sender: AnyObject) {
+    func addQuestion(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let contentViewController = storyboard.instantiateViewControllerWithIdentifier("ModalController") as! ModalController
-        
-        contentViewController.answerText = currentQuestion.answer!
+        let contentViewController = storyboard.instantiateViewControllerWithIdentifier("AddQuestionViewController") as! AddQuestionViewController
+        contentViewController.managedContext = self.managedContext
         
         contentViewController.modalPresentationStyle = UIModalPresentationStyle.Popover // 2
         let detailPopover: UIPopoverPresentationController = contentViewController.popoverPresentationController!
         
         detailPopover.sourceView = answerLabel
+        detailPopover.permittedArrowDirections = UIPopoverArrowDirection.Any
+        detailPopover.delegate = self
+        presentViewController(contentViewController, animated: true, completion:nil) // 4
+    }
+    
+    func displayAnswer(sender: AnyObject) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let contentViewController = storyboard.instantiateViewControllerWithIdentifier("ModalController") as! ModalController
+        
+        contentViewController.modalPresentationStyle = UIModalPresentationStyle.Popover // 2
+        let detailPopover: UIPopoverPresentationController = contentViewController.popoverPresentationController!
+        
+        detailPopover.sourceView = questionLabel
         detailPopover.permittedArrowDirections = UIPopoverArrowDirection.Any
         detailPopover.delegate = self
         presentViewController(contentViewController, animated: true, completion:nil) // 4

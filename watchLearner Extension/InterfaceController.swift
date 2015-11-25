@@ -21,6 +21,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBOutlet var questionLabel: WKInterfaceLabel!
     @IBOutlet var answerLabel: WKInterfaceLabel!
     @IBOutlet var questionImage: WKInterfaceImage!
+    @IBOutlet var answerImage: WKInterfaceImage!
     
     @IBOutlet var nextDueDate: WKInterfaceLabel!
     @IBOutlet var nextDueTimer: WKInterfaceTimer!
@@ -63,10 +64,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         if soundToPlay != nil {
             let myBundle = NSBundle.mainBundle()
             var soundMinusMP3 = soundToPlay!
-            soundMinusMP3 = "5.mp3"
             let stringRange = soundMinusMP3.startIndex.advancedBy(soundMinusMP3.characters.count - 4)..<soundMinusMP3.endIndex
             soundMinusMP3.removeRange(stringRange)
-            let soundFile = myBundle.URLForResource(soundToPlay, withExtension: "mp3")
+            let soundFile = myBundle.URLForResource(soundMinusMP3, withExtension: "mp3")
+            print(soundMinusMP3)
             
             let options: [NSObject: AnyObject] = [WKMediaPlayerControllerOptionsAutoplayKey : true]
             presentMediaPlayerControllerWithURL(soundFile!, options: options) { (didEndPlay: Bool, endTime: NSTimeInterval, error: NSError?) -> Void in
@@ -86,10 +87,11 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         if answerIsHidden {
             showAnswerButton.setTitle("Show Question")
             answerLabel.setHidden(false)
-            questionImage.setHidden(false)
+            answerImage.setHidden(false)
         } else {
             showAnswerButton.setTitle("Show Answer")
             answerLabel.setHidden(true)
+            answerImage.setHidden(true)
         }
         answerIsHidden = !answerIsHidden
     }
@@ -106,10 +108,9 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session.activateSession()
         }
         
-        let applicationData = ["messageType": "getQuestion"]
-        
-        if session.reachable {              // This wakes up iphone app into background http://stackoverflow.com/questions/31618550/how-to-wake-up-iphone-app-from-watchos-2 - answer by ccjensen
-            session.sendMessage(applicationData, replyHandler: {(reply: [String : AnyObject]) -> Void in
+        if WCSession.defaultSession().reachable {
+            let applicationData = ["messageType": "getQuestion"]
+            WCSession.defaultSession().sendMessage(applicationData, replyHandler: {(reply: [String : AnyObject]) -> Void in
                 if let question = reply["question"] as? String,
                     let answer = reply["answer"] as? String,
                     let qImage = reply["qImage"] as? String,
@@ -127,8 +128,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     if !qSound.isEmpty {
                         self.soundToPlay = qSound
                     }
-                    self.setDisplay(question, answer: answer, qImage: qImage, aImage: aImage, lastAnswered: lastAnsweredText, nextDue: nextDueText, qSound: qSound, aSound: aSound)
-                    self.currentQid = qid
+                    if reply["qid"] != nil {
+                        if (self.currentQid == nil || !(self.currentQid!.intValue == qid.intValue)) {
+                            self.setDisplay(question, answer: answer, qImage: qImage, aImage: aImage, lastAnswered: lastAnsweredText, nextDue: nextDueText, qSound: qSound, aSound: aSound)
+                            self.currentQid = qid
+                        }
+                    }
                 }
                 }, errorHandler:
                 {
@@ -136,6 +141,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                     // catch any errors here
                 }
             )
+        } else {
+            self.getQuestionFromiPhone()
         }
     }
     
@@ -149,7 +156,10 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     func setDisplay(question: String, answer: String, qImage: String, aImage: String, lastAnswered: String, nextDue: String, qSound: String, aSound: String) {
         questionImage.setImage(nil)
         questionImage.setHidden(true)
+        answerImage.setImage(nil)
+        answerImage.setHidden(true)
         playSoundButton.setHidden(true)
+        answerLabel.setText("")
         if !question.isEmpty {
             self.questionLabel.setHidden(false)
             self.questionLabel.setText(question)
@@ -168,8 +178,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         if !aImage.isEmpty {
             var aImageNew = aImage.stringByReplacingOccurrencesOfString(".svg", withString: "")
             aImageNew = aImageNew.stringByReplacingOccurrencesOfString(".gif", withString: "")
-            questionImage.setImageNamed(aImageNew)
-            questionImage.setHidden(true)
+            answerImage.setImageNamed(aImageNew)
+            answerImage.setHidden(true)
         }
         if !lastAnswered.isEmpty {
             lastAnsweredLabel.setText(lastAnswered)

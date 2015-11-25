@@ -30,7 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
     lazy var inactiveQuestionPredicate: NSPredicate = {
         var predicate = NSPredicate(format: "current = NO")
         return predicate
-        
     }()
     
     private func setupWatchConnectivity() {
@@ -43,6 +42,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         // 4
         session.activateSession()
         }
+    }
+    
+    func addQuestion(questionInfo: NSDictionary) {
+        
     }
     
     func recordAnswer(qid: Int32, accuracy: Bool) -> NSDate {
@@ -130,6 +133,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
     }
     
     func scheduleLocal(sender: AnyObject, timeToSend: NSTimeInterval) {
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
         let settings = UIApplication.sharedApplication().currentUserNotificationSettings()
         
         if settings!.types == .None {
@@ -151,12 +155,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
         UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
     
+    func beginBackgroundUpdateTask() -> UIBackgroundTaskIdentifier {
+        return UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler({})
+    }
+    
+    func endBackgroundUpdateTask(taskID: UIBackgroundTaskIdentifier) {
+        UIApplication.sharedApplication().endBackgroundTask(taskID)
+    }
+    
     func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+        
+            // How to wake up iPhone app from Watchos 2: http://stackoverflow.com/questions/31618550/how-to-wake-up-iphone-app-from-watchos-2
+            
         var questions = [Questions]()
         var reply = [String: AnyObject]()
         let request = NSFetchRequest(entityName: "Questions")
         
-        
+    
         let messageType = message["messageType"] as? String
         
         if !(messageType == nil) {
@@ -166,7 +181,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
                         let qid = message["qid"] as! NSNumber
                         request.predicate = NSPredicate(format: "qid = %d", qid.intValue)
                         do {
-                            questions = try managedObjectContext.executeFetchRequest(request) as! [Questions]
+                            questions = try self.managedObjectContext.executeFetchRequest(request) as! [Questions]
                         } catch _ as NSError {
                             print("getRequest error")
                         }
@@ -178,10 +193,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
                     }
                     
                     case "getQuestion":
-                        request.predicate = earliestActiveQuestionPredicate
+                        request.predicate = self.earliestActiveQuestionPredicate
                         request.sortDescriptors = [NSSortDescriptor(key: "nextdue", ascending: true)]
                         do {
-                            questions = try managedObjectContext.executeFetchRequest(request) as! [Questions]
+                            questions = try self.managedObjectContext.executeFetchRequest(request) as! [Questions]
                         } catch _ as NSError {
                             print("getRequest error")
                         }
@@ -233,21 +248,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, WCSessionDelegate {
                         } else {
                             reply["qsound"] = ""
                         }
-                    /*
-                        reply["qid"] = NSNumber(int: 1)
-                        reply["question"] = "question"
-                        reply["answer"] = "answer"
-                    reply["aImage"] = "aImage"
-                    reply["qImage"] = "qImage"
-                    */
                 default:
                     print("default")
                 }
             }
         }
-        
- //       let replytemp = ["question":reply["question"]!, "answer":reply["answer"]!, "aImage": tester, "qImage":"qImage", "qid": questions[0].qid!]//NSNumber(int: 1)]
-        
+    
        replyHandler(reply)
     }
     

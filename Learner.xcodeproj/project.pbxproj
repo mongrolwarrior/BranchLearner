@@ -77,6 +77,7 @@
 		35F264551BF8482C0060551D /* Hunding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 35F264251BF8482C0060551D /* Hunding.mp3 */; };
 		35F264561BF8482C0060551D /* ThreatOfViolence.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 35F264261BF8482C0060551D /* ThreatOfViolence.mp3 */; };
 		35F264571BF8482C0060551D /* 21.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 35F264271BF8482C0060551D /* 21.mp3 */; };
+		35F264591BF87EB40060551D /* AddQuestionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F264581BF87EB40060551D /* AddQuestionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,6 +198,7 @@
 		35F264251BF8482C0060551D /* Hunding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Hunding.mp3; sourceTree = "<group>"; };
 		35F264261BF8482C0060551D /* ThreatOfViolence.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ThreatOfViolence.mp3; sourceTree = "<group>"; };
 		35F264271BF8482C0060551D /* 21.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 21.mp3; sourceTree = "<group>"; };
+		35F264581BF87EB40060551D /* AddQuestionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddQuestionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +250,7 @@
 				35CFD7181BECF1690039A868 /* ViewController.swift */,
 				35CFD72F1BED9EFE0039A868 /* Extensions.swift */,
 				35CFD71A1BECF1690039A868 /* Main.storyboard */,
+				35F264581BF87EB40060551D /* AddQuestionViewController.swift */,
 				35A431461BF5F44000831687 /* ModalController.swift */,
 				35CFD7201BECF1690039A868 /* Assets.xcassets */,
 				35CFD7221BECF1690039A868 /* LaunchScreen.storyboard */,
@@ -521,6 +524,7 @@
 			files = (
 				35174F741BEE1C10005A0DD5 /* AnswerLog+CoreDataProperties.swift in Sources */,
 				35CFD7191BECF1690039A868 /* ViewController.swift in Sources */,
+				35F264591BF87EB40060551D /* AddQuestionViewController.swift in Sources */,
 				35CFD7301BED9EFE0039A868 /* Extensions.swift in Sources */,
 				35CFD7171BECF1690039A868 /* AppDelegate.swift in Sources */,
 				35A431471BF5F44000831687 /* ModalController.swift in Sources */,
