@@ -137,6 +137,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
     
     func setQuestion() {
         answerLabel.text = ""
+        questionLabel.text = ""
         
         if currentQuestion.question != nil {
             if !currentQuestion.question!.isEmpty {
@@ -148,15 +149,15 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         questionImageView.hidden = true
         if currentQuestion.qPictureName != nil {
             if !currentQuestion.qPictureName!.isEmpty {
-                print(currentQuestion.qPictureName!)
                 questionImageView.hidden = false
                 questionImageView.image = UIImage(named: currentQuestion.qPictureName!)
+                print(currentQuestion.qPictureName!)
             }
         }
     
         if currentQuestion.aPictureName != nil {
             if !currentQuestion.aPictureName!.isEmpty {
-                questionImageView.hidden = false
+                questionImageView.hidden = true
                 questionImageView.image = UIImage(contentsOfFile: fileInDocumentsDirectory(currentQuestion.aPictureName!))
             }
         }
@@ -174,7 +175,6 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         }
         print(questions[0].question)
         currentQuestion = questions[0]
-        print(currentQuestion.question)
     }
     
     func respondToSwipeGesture(gesture: UIGestureRecognizer) {
@@ -349,6 +349,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         let contentViewController = storyboard.instantiateViewControllerWithIdentifier("ModalController") as! ModalController
         
         contentViewController.modalPresentationStyle = UIModalPresentationStyle.Popover // 2
+        contentViewController.answerText = answerLabel.text!
         let detailPopover: UIPopoverPresentationController = contentViewController.popoverPresentationController!
         
         detailPopover.sourceView = questionLabel

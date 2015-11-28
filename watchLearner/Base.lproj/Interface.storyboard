@@ -15,8 +15,8 @@
                                 <action selector="showAnswerButtonAction" destination="AgC-eL-Hgc" id="SDV-9q-7D1"/>
                             </connections>
                         </button>
-                        <label alignment="left" numberOfLines="0" id="fyM-l0-eCv"/>
                         <label alignment="left" hidden="YES" numberOfLines="0" id="HRv-lb-aLB"/>
+                        <label alignment="left" numberOfLines="0" id="fyM-l0-eCv"/>
                         <imageView alignment="left" hidden="YES" id="lFk-9x-qTT"/>
                         <imageView alignment="left" hidden="YES" id="JwZ-hH-UaV" userLabel="Answer Image"/>
                         <label alignment="left" text="Last answered:" id="duq-Ow-kN8" userLabel="Last answered:">

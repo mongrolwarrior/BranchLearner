@@ -409,12 +409,15 @@
 				TargetAttributes = {
 					35CFD7121BECF1690039A868 = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = SY846NW4W7;
 					};
 					35E452F31BF069F600C1674C = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = SY846NW4W7;
 					};
 					35E452FF1BF069F600C1674C = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = SY846NW4W7;
 					};
 				};
 			};
@@ -676,10 +679,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Andrew Amos (SCNQ33E24K)";
 				INFOPLIST_FILE = Learner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SlyLie.Learner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "3745ece2-2b99-4644-baf1-18e0fdce748c";
 			};
 			name = Debug;
 		};
@@ -687,10 +692,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Andrew Amos (SCNQ33E24K)";
 				INFOPLIST_FILE = Learner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SlyLie.Learner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "3745ece2-2b99-4644-baf1-18e0fdce748c";
 			};
 			name = Release;
 		};
@@ -698,6 +705,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				IBSC_MODULE = watchLearner_Extension;
 				INFOPLIST_FILE = watchLearner/Info.plist;
@@ -714,6 +722,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				IBSC_MODULE = watchLearner_Extension;
 				INFOPLIST_FILE = watchLearner/Info.plist;
@@ -730,6 +739,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "watchLearner Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SlyLie.Learner.watchkitapp.watchkitextension;
@@ -745,6 +755,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "watchLearner Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SlyLie.Learner.watchkitapp.watchkitextension;
