@@ -21,6 +21,25 @@ class AddQuestionViewController: UIViewController {
     @IBOutlet weak var aSoundTF: UITextField!
     
     @IBAction func addQuestion(sender: AnyObject) {
+        let idRequest = NSFetchRequest(entityName: "Questions")
+        let idSortDescriptor = NSSortDescriptor(key: "qid", ascending: false)
+        idRequest.sortDescriptors = [idSortDescriptor]
+        
+        var newID = 0
+        
+        do {
+            let questions = try managedContext.executeFetchRequest(idRequest) as! [Questions]
+            if !questions.isEmpty {
+                if !(questions[0].qid == nil) {
+                    newID = questions[0].qid!.integerValue + 1
+                }
+            }
+        } catch _ as NSError {
+            print("getRequest error")
+        }
+        
+        
+        
         let entity = NSEntityDescription.entityForName("Questions", inManagedObjectContext: managedContext)
         let questionToAdd = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
         
@@ -30,7 +49,9 @@ class AddQuestionViewController: UIViewController {
         if !answerTV.text.isEmpty {
             questionToAdd.setValue(answerTV.text, forKey: "answer")
         }
-        
+        questionToAdd.setValue(newID, forKey: "qid")
+        questionToAdd.setValue(0, forKey: "current")
+        questionToAdd.setValue(NSDate(), forKey: "datecreated")
         do {
             try managedContext.save()
         } catch let error as NSError {

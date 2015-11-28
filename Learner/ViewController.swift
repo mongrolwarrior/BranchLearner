@@ -264,14 +264,18 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
         request.sortDescriptors = [NSSortDescriptor(key: "qid", ascending: false)]
         do {
             questions = try managedContext.executeFetchRequest(request) as! [Questions]
+            if questions.isEmpty {
+                self.updateCurrentQuestion()
+            } else {
+                currentQuestion = questions[0]
+                currentQuestion.current = true
+                currentQuestion.nextdue = NSDate()
+                currentQuestion.lastanswered = NSDate()
+            }
+            self.setQuestion()
         } catch _ as NSError {
             print("getRequest error")
         }
-        currentQuestion = questions[0]
-        currentQuestion.current = true
-        currentQuestion.nextdue = NSDate()
-        currentQuestion.lastanswered = NSDate()
-        self.setQuestion()
     }
     
     func recordAnswer(accuracy: Bool) {
