@@ -1,4 +1,4 @@
-//
+    //
 //  ViewController.swift
 //  Learner
 //
@@ -128,8 +128,10 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
             if !currentQuestion.answer!.isEmpty {
                 if answerLabel.text == "" {
                     answerLabel.text = currentQuestion.answer!
+                    answerLabel.hidden = false
                 } else {
                     answerLabel.text = ""
+                    answerLabel.hidden = true
                 }
             }
         }
@@ -279,6 +281,7 @@ class ViewController: UIViewController, UIPopoverPresentationControllerDelegate 
     }
     
     func recordAnswer(accuracy: Bool) {
+        answerLabel.hidden = true
         let correctionConstant = currentQuestion.correction ?? 0.0  // "Nil coalescing operator" assigns the left hand side if the conditional is not nil, or the right hand side
         var dateLatency: NSTimeInterval = currentQuestion.nextdue!.timeIntervalSinceNow
         

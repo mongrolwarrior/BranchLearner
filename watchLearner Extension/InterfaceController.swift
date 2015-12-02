@@ -76,10 +76,12 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     @IBAction func onCorrectAnswer() {
+        answerLabel.setHidden(true)
         sendAnswerToiPhone(true)
     }
     
     @IBAction func onIncorrectAnswer() {
+        answerLabel.setHidden(true)
         sendAnswerToiPhone(false)
     }
     
